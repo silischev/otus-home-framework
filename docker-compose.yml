@@ -4,10 +4,6 @@ services:
     project:
         build: ./docker-files/project
         container_name: home-framework-project
-        environment:
-            - XDEBUG_HOST=${XDEBUG_HOST}
-            - XDEBUG_PORT=${XDEBUG_PORT}
-            - XDEBUG_IDE_KEY=${XDEBUG_IDE_KEY}
         depends_on:
             - postgresql
         volumes:
@@ -21,8 +17,8 @@ services:
         ports:
             - 5432:5432
         environment:
-            - POSTGRES_USER=${DB_USERNAME}
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_USER=dev
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=test
         volumes:
             - /var/lib/postgresql
