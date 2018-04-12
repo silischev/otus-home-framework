@@ -1,24 +1,26 @@
-version: '2'
-
+version: '3'
 services:
-    project:
-        build: ./docker-files/project
-        container_name: home-framework-project
+    nginx:
+        image: nginx:latest
+        ports:
+            - '80:80'
+        volumes:
+            - .:/app
+            - ./docker/nginx/vhost.conf:/etc/nginx/conf.d/vhost.conf
         depends_on:
-            - postgresql
-        volumes:
-            - .:/var/www
+              - 'php-fpm'
+    php-fpm:
+        image: php:7.2-fpm
         ports:
-             - 8000:80
-
-    postgresql:
-        image: postgres:9.5.6
-        container_name: home-framework-postgresql
-        ports:
-            - 5432:5432
-        environment:
-            - POSTGRES_USER=dev
-            - POSTGRES_PASSWORD=root
-            - POSTGRES_DB=test
+          - 9000
         volumes:
-            - /var/lib/postgresql
+          - .:/app
+    postgres10:
+      image: postgres:10
+      ports:
+       - '5432:5432'
+      volumes:
+       - .:/app
+       - data:/var/lib/postgresql/data
+volumes:
+  data: {}
