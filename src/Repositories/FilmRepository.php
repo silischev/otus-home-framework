@@ -27,7 +27,6 @@ class FilmRepository implements FilmRepositoryInterface
      */
     public function getPopularFilmsByAgeRange(int $fromAge, int $toAge): array
     {
-        // TODO: Implement getPopularFilmsByAgeRange() method.
     }
 
     /**
