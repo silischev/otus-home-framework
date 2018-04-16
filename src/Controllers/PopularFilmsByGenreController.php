@@ -2,26 +2,30 @@
 
 namespace Otus\Controllers;
 
+use Otus\Core\Response;
+use Otus\Exceptions\Http\BadRequestHttpException;
+use Otus\Helpers\FilmsUserViewHelper;
+use Otus\Helpers\HttpRequestHelper;
 use Otus\Interfaces\ControllerInterface;
-use Otus\Interfaces\FilmRepositoryInterface;
 use Otus\Interfaces\RequestInterface;
 use Otus\Interfaces\ResponseInterface;
+use Otus\Services\FilmsByGenreService;
 
 class PopularFilmsByGenreController implements ControllerInterface
 {
     /**
-     * @var FilmRepositoryInterface
+     * @var FilmsByGenreService
      */
-    private $filmRepository;
+    private $filmsByGenreService;
 
     /**
      * PopularFilmsByGenreController constructor.
      *
-     * @param FilmRepositoryInterface $filmRepository
+     * @param FilmsByGenreService $filmsByGenreService
      */
-    public function __construct(FilmRepositoryInterface $filmRepository)
+    public function __construct(FilmsByGenreService $filmsByGenreService)
     {
-        $this->filmRepository = $filmRepository;
+        $this->filmsByGenreService = $filmsByGenreService;
     }
 
     /**
@@ -29,6 +33,15 @@ class PopularFilmsByGenreController implements ControllerInterface
      */
     public function execute(RequestInterface $request): ResponseInterface
     {
-        // TODO: Implement execute() method.
+        $genre = !empty($request->getParam('genre')) ? $request->getParam('genre') : null;
+
+        if (empty($genre)) {
+            throw new BadRequestHttpException('Parameter "genre" must be defined');
+        }
+
+        $genresList = HttpRequestHelper::getParameterListAsArray($genre);
+        $films = $this->filmsByGenreService->getByGenre($genresList);
+
+        return new Response(FilmsUserViewHelper::getFilmsAsList($films));
     }
 }

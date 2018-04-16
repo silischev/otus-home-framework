@@ -3,6 +3,8 @@
 namespace Otus\Controllers;
 
 use Otus\Core\Response;
+use Otus\Exceptions\Http\BadRequestHttpException;
+use Otus\Helpers\FilmsUserViewHelper;
 use Otus\Interfaces\ControllerInterface;
 use Otus\Interfaces\RequestInterface;
 use Otus\Interfaces\ResponseInterface;
@@ -30,10 +32,15 @@ class PopularFilmsByAgeRangeController implements ControllerInterface
      */
     public function execute(RequestInterface $request): ResponseInterface
     {
-        pr($this->filmsByAgeService->getByRange(10, 15), 1);
+        $fromAge = !empty($request->getParam('from')) ? $request->getParam('from') : null;
+        $toAge = !empty($request->getParam('to')) ? $request->getParam('to') : null;
 
-        $response = new Response('');
+        if (empty($fromAge) || empty($toAge)) {
+            throw new BadRequestHttpException('Parameters "from" and "to" must be defined');
+        }
 
-        return $response;
+        $films = $this->filmsByAgeService->getByRange($fromAge, $toAge);
+
+        return new Response(FilmsUserViewHelper::getFilmsAsList($films));
     }
 }

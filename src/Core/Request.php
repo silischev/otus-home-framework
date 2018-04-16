@@ -24,6 +24,13 @@ class Request implements RequestInterface
      */
     private $params;
 
+    /**
+     * Request constructor.
+     *
+     * @param string $type
+     * @param string $uri
+     * @param array $params
+     */
     public function __construct(string $type, string $uri, array $params = [])
     {
         $this->type = $type;
@@ -31,6 +38,12 @@ class Request implements RequestInterface
         $this->params = $params;
     }
 
+    /**
+     * @param string $key
+     * @param string|null $default
+     *
+     * @return null|string
+     */
     public function getParam(string $key, string $default = null): ?string
     {
         return !empty($this->params[$key]) ? $this->params[$key] : $default;

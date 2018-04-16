@@ -2,26 +2,30 @@
 
 namespace Otus\Controllers;
 
+use Otus\Core\Response;
+use Otus\Exceptions\Http\BadRequestHttpException;
+use Otus\Helpers\FilmsUserViewHelper;
+use Otus\Helpers\HttpRequestHelper;
 use Otus\Interfaces\ControllerInterface;
-use Otus\Interfaces\FilmRepositoryInterface;
 use Otus\Interfaces\RequestInterface;
 use Otus\Interfaces\ResponseInterface;
+use Otus\Services\FilmsByProfessionService;
 
-class PopularFilmsByProfession implements ControllerInterface
+class PopularFilmsByProfessionController implements ControllerInterface
 {
     /**
-     * @var FilmRepositoryInterface
+     * @var FilmsByProfessionService
      */
-    private $filmRepository;
+    private $filmsByProfessionService;
 
     /**
-     * PopularFilmsByGenreController constructor.
+     * PopularFilmsByProfessionController constructor.
      *
-     * @param FilmRepositoryInterface $filmRepository
+     * @param FilmsByProfessionService $filmsByProfessionService
      */
-    public function __construct(FilmRepositoryInterface $filmRepository)
+    public function __construct(FilmsByProfessionService $filmsByProfessionService)
     {
-        $this->filmRepository = $filmRepository;
+        $this->filmsByProfessionService = $filmsByProfessionService;
     }
 
     /**
@@ -29,6 +33,15 @@ class PopularFilmsByProfession implements ControllerInterface
      */
     public function execute(RequestInterface $request): ResponseInterface
     {
-        // TODO: Implement execute() method.
+        $profession = !empty($request->getParam('profession')) ? $request->getParam('profession') : null;
+
+        if (empty($profession)) {
+            throw new BadRequestHttpException('Parameter "profession" must be defined');
+        }
+
+        $professionsList = HttpRequestHelper::getParameterListAsArray($profession);
+        $films = $this->filmsByProfessionService->getByProfession($professionsList);
+
+        return new Response(FilmsUserViewHelper::getFilmsAsList($films));
     }
 }

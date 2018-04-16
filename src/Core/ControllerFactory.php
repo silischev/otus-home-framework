@@ -2,6 +2,7 @@
 
 namespace Otus\Core;
 
+use Otus\Exceptions\Http\NotFoundHttpException;
 use Otus\Interfaces\ControllerFactoryInterface;
 use Otus\Interfaces\ControllerInterface;
 use Otus\Interfaces\RequestInterface;
@@ -31,7 +32,7 @@ class ControllerFactory implements ControllerFactoryInterface
         $controller = $this->routes[$uri];
 
         if (empty($controller)) {
-            throw new \HttpRequestMethodException('Controller not found');
+            throw new NotFoundHttpException('Controller not found');
         }
 
         return $controller;

@@ -5,7 +5,7 @@ namespace Otus\Services;
 use Otus\Interfaces\FilmInterface;
 use Otus\Interfaces\FilmRepositoryInterface;
 
-class FilmsByAgeService
+class FilmsByProfessionService
 {
     /**
      * @var FilmRepositoryInterface
@@ -23,14 +23,13 @@ class FilmsByAgeService
     }
 
     /**
-     * @param int $fromAge
-     * @param int $toAge
+     * @param array $profession
      *
      * @return FilmInterface[]
      */
-    public function getByRange(int $fromAge, int $toAge): array
+    public function getByProfession(array $profession): array
     {
-        return $this->filmRepository->getPopularFilmsByAgeRange($fromAge, $toAge);
+        return $this->filmRepository->getPopularFilmsByProfession($profession);
     }
 
 }

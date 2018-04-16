@@ -10,7 +10,7 @@ services:
         depends_on:
               - 'php-fpm'
     php-fpm:
-        image: php:7.2-fpm
+        build: docker/php
         ports:
           - 9000
         volumes:

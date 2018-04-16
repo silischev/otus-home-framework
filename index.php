@@ -1,22 +1,31 @@
 <?php
 
+use Otus\Core\DbConnection;
+use Otus\Exceptions\Http\CommonHttpException;
+use Otus\Interfaces\ControllerFactoryInterface;
+use Otus\Interfaces\RequestBuilderInterface;
+
 require_once(__DIR__ . '/bootstrap/autoload.php');
 require_once(__DIR__ . '/src/functions.php');
 
 try {
-    $requestBuilder = $container->get(Otus\Interfaces\RequestBuilderInterface::class);
+    $db = $container->get(DbConnection::class);
+
+    $requestBuilder = $container->get(RequestBuilderInterface::class);
 
     $request = $requestBuilder->getRequest($_GET, $_POST);
 
-    $controllerFactory = $container->get(Otus\Interfaces\ControllerFactoryInterface::class);
+    $controllerFactory = $container->get(ControllerFactoryInterface::class);
 
     $controller = $controllerFactory->getController($request);
 
     $response = $controller->execute($request);
 
-    vr($response, 1);
-
     echo $response->getResponse();
+} catch (CommonHttpException $e) {
+    header($e->getHeader());
+    echo $e->getMessage();
 } catch (Throwable $e) {
+    header('HTTP/1.1 500 Internal Server Error');
     echo $e->getMessage();
 }
