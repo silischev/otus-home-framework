@@ -10,6 +10,7 @@ use Otus\Interfaces\ControllerInterface;
 use Otus\Interfaces\RequestInterface;
 use Otus\Interfaces\ResponseInterface;
 use Otus\Services\FilmsByProfessionService;
+use Otus\Validators\FilmsSearchParameters\ProfessionParametersValidator;
 
 class PopularFilmsByProfessionController implements ControllerInterface
 {
@@ -33,11 +34,10 @@ class PopularFilmsByProfessionController implements ControllerInterface
      */
     public function execute(RequestInterface $request): ResponseInterface
     {
-        $profession = !empty($request->getParam('profession')) ? $request->getParam('profession') : null;
+        $requestValidator = new ProfessionParametersValidator();
+        $requestValidator->validate($request);
 
-        if (empty($profession)) {
-            throw new BadRequestHttpException('Parameter "profession" must be defined');
-        }
+        $profession = $request->getParam('profession');
 
         $professionsList = HttpRequestHelper::getParameterListAsArray($profession);
         $films = $this->filmsByProfessionService->getByProfession($professionsList);

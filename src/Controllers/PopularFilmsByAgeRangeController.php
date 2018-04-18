@@ -9,6 +9,8 @@ use Otus\Interfaces\ControllerInterface;
 use Otus\Interfaces\RequestInterface;
 use Otus\Interfaces\ResponseInterface;
 use Otus\Services\FilmsByAgeService;
+use Otus\Validators\FilmsSearchParameters\AgeParametersValidator;
+use Otus\Validators\FilmsSearchParameters\AgeParameterValidator;
 
 class PopularFilmsByAgeRangeController implements ControllerInterface
 {
@@ -32,12 +34,11 @@ class PopularFilmsByAgeRangeController implements ControllerInterface
      */
     public function execute(RequestInterface $request): ResponseInterface
     {
-        $fromAge = !empty($request->getParam('from')) ? $request->getParam('from') : null;
-        $toAge = !empty($request->getParam('to')) ? $request->getParam('to') : null;
+        $requestValidator = new AgeParametersValidator();
+        $requestValidator->validate($request);
 
-        if (empty($fromAge) || empty($toAge)) {
-            throw new BadRequestHttpException('Parameters "from" and "to" must be defined');
-        }
+        $fromAge = $request->getParam('from');
+        $toAge = $request->getParam('to');
 
         $films = $this->filmsByAgeService->getByRange($fromAge, $toAge);
 

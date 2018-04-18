@@ -9,6 +9,7 @@ use Otus\Interfaces\ControllerInterface;
 use Otus\Interfaces\RequestInterface;
 use Otus\Interfaces\ResponseInterface;
 use Otus\Services\FilmsByPeriodService;
+use Otus\Validators\FilmsSearchParameters\PeriodParametersValidator;
 
 class PopularFilmsByPeriodController implements ControllerInterface
 {
@@ -32,12 +33,11 @@ class PopularFilmsByPeriodController implements ControllerInterface
      */
     public function execute(RequestInterface $request): ResponseInterface
     {
-        $fromYear = !empty($request->getParam('from')) ? $request->getParam('from') : null;
-        $toYear = !empty($request->getParam('to')) ? $request->getParam('to') : null;
+        $requestValidator = new PeriodParametersValidator();
+        $requestValidator->validate($request);
 
-        if (empty($fromYear) || empty($toYear)) {
-            throw new BadRequestHttpException('Parameters "from" and "to" must be defined');
-        }
+        $fromYear = $request->getParam('from');
+        $toYear = $request->getParam('to');
 
         $films = $this->filmsByPeriodService->getByPeriod($fromYear, $toYear);
 

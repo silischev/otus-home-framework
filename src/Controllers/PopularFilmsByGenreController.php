@@ -10,6 +10,7 @@ use Otus\Interfaces\ControllerInterface;
 use Otus\Interfaces\RequestInterface;
 use Otus\Interfaces\ResponseInterface;
 use Otus\Services\FilmsByGenreService;
+use Otus\Validators\FilmsSearchParameters\GenreParametersValidator;
 
 class PopularFilmsByGenreController implements ControllerInterface
 {
@@ -33,11 +34,10 @@ class PopularFilmsByGenreController implements ControllerInterface
      */
     public function execute(RequestInterface $request): ResponseInterface
     {
-        $genre = !empty($request->getParam('genre')) ? $request->getParam('genre') : null;
+        $requestValidator = new GenreParametersValidator();
+        $requestValidator->validate($request);
 
-        if (empty($genre)) {
-            throw new BadRequestHttpException('Parameter "genre" must be defined');
-        }
+        $genre = $request->getParam('genre');
 
         $genresList = HttpRequestHelper::getParameterListAsArray($genre);
         $films = $this->filmsByGenreService->getByGenre($genresList);
