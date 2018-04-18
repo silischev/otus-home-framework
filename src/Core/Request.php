@@ -57,4 +57,12 @@ class Request implements RequestInterface
         return $this->uri;
     }
 
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
 }

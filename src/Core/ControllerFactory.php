@@ -29,7 +29,7 @@ class ControllerFactory implements ControllerFactoryInterface
         /**
          * @var ControllerInterface $route
          */
-        $controller = $this->routes[$uri];
+        $controller = !empty($this->routes[$uri]) ? $this->routes[$uri] : null;
 
         if (empty($controller)) {
             throw new NotFoundHttpException('Controller not found');
